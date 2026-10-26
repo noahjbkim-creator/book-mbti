@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>독서 MBTI 테스트</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;background:linear-gradient(160deg,#f6ead7,#e8d3b3);color:#3b2a1a;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:24px 14px}
+.card{background:#fffaf1;max-width:480px;width:100%;border-radius:18px;box-shadow:0 10px 30px rgba(90,60,30,.18);padding:28px 22px;border-left:10px solid #8b4a2b}
+h1{font-family:Georgia,serif;font-size:1.7em;margin:.2em 0;color:#6b3420}.sub{color:#7a6048;line-height:1.6}
+.btn{display:block;width:100%;padding:15px;margin:10px 0;border:2px solid #c9a57a;background:#fff;border-radius:12px;font-size:1em;color:#3b2a1a;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+.btn:hover{background:#f3e3cc;border-color:#8b4a2b}.primary{background:#8b4a2b;color:#fff;text-align:center;border-color:#8b4a2b;font-weight:bold}.primary:hover{background:#6b3420}
+.bar{height:8px;background:#ead8bd;border-radius:4px;overflow:hidden;margin-bottom:18px}.bar i{display:block;height:100%;background:#8b4a2b;transition:width .3s}
+.q{font-size:1.15em;font-weight:600;line-height:1.6;margin:10px 0 18px}.num{color:#a0764f;font-size:.9em}
+.type{font-family:Georgia,serif;font-size:3em;letter-spacing:.1em;color:#8b4a2b;text-align:center;margin:0}.title{text-align:center;font-size:1.3em;font-weight:bold;margin:4px 0 14px}
+.ax{display:flex;align-items:center;gap:8px;font-size:.85em;margin:8px 0}.ax .t{flex:1;height:12px;background:#ead8bd;border-radius:6px;overflow:hidden}.ax .t i{display:block;height:100%;background:#c07a4a}.ax b{width:64px}.ax b:last-child{text-align:right}
+.books li{margin:6px 0;line-height:1.5}h3{color:#6b3420;margin:20px 0 6px}.hide{display:none}.emoji{font-size:3em;text-align:center}
+</style></head><body><div class="card">
+<div id="start"><div class="emoji">📚</div><h1>나는 어떤 독자일까?</h1><p class="sub">책과 독서 습관에 관한 12가지 질문으로 알아보는 <b>독서 MBTI</b>. 약 2분이면 끝나요. 깊게 고민하지 말고 끌리는 쪽을 골라 주세요!</p><button class="btn primary" id="go">테스트 시작하기</button></div>
+<div id="quiz" class="hide"><div class="num" id="num"></div><div class="bar"><i id="prog"></i></div><div class="q" id="q"></div><button class="btn" id="a0"></button><button class="btn" id="a1"></button></div>
+<div id="result" class="hide"></div>
+</div><script>
+const Q=[
+["E","책을 다 읽고 나면 나는…","누군가에게 바로 이야기하거나 SNS에 후기를 남긴다","혼자 조용히 여운을 곱씹는다"],
+["E","독서 모임에 초대받았다!","좋아! 다른 사람 생각을 듣는 게 제일 재밌다","음… 혼자 읽는 게 더 편하다"],
+["E","가장 책이 잘 읽히는 장소는?","사람들이 오가는 카페나 북카페","아무도 없는 내 방 침대 위"],
+["S","서점에서 먼저 손이 가는 코너는?","실용서·에세이·역사 같은 실제 이야기","SF·판타지·우화 같은 상상의 세계"],
+["S","좋은 문장이란?","정확하고 구체적으로 정보를 전달하는 문장","여러 번 곱씹게 되는 은유와 상징이 있는 문장"],
+["S","소설을 읽을 때 나는…","장면 묘사와 디테일을 꼼꼼히 따라간다","숨은 의미와 결말 이후를 상상한다"],
+["T","책을 평가하는 기준은?","논리적 구성과 설득력","마음을 얼마나 울렸는가"],
+["T","주인공이 비합리적인 선택을 했다","\"왜 저래?\" 답답하다","그럴 수밖에 없던 마음이 이해된다"],
+["T","친구에게 책을 추천할 때 나는…","\"이 책은 이런 점에서 유익해\"라고 설명한다","\"너 요즘 힘들잖아, 이거 위로가 될 거야\"라고 건넨다"],
+["J","내 독서 방식은?","올해 읽을 책 목록과 목표 권수가 있다","그때그때 끌리는 책을 집어 든다"],
+["J","책 한 권을 읽는 스타일은?","한 권을 끝내고 다음 권으로 넘어간다","여러 권을 동시에 조금씩 읽는다"],
+["J","재미없는 책을 만났을 때","시작했으니 일단 끝까지 읽는다","과감히 덮고 다른 책을 편다"]];
+const OPP={E:"I",S:"N",T:"F",J:"P"};const NAME={E:"외향",I:"내향",S:"감각",N:"직관",T:"사고",F:"감정",J:"판단",P:"인식"};
+const R={
+ISTJ:["꼼꼼한 기록관형 독자","정해둔 목록대로 한 권씩 성실히 완독하고, 밑줄과 메모를 남기는 신뢰의 독자. 사실과 검증된 지식을 좋아해요.",["총, 균, 쇠 - 재레드 다이아몬드","사피엔스 - 유발 하라리","아주 작은 습관의 힘 - 제임스 클리어"]],
+ISFJ:["다정한 책갈피형 독자","따뜻한 일상 이야기와 사람 냄새 나는 책을 아끼며, 좋아하는 책을 오래 곁에 두고 다시 읽어요.",["불편한 편의점 - 김호연","나미야 잡화점의 기적 - 히가시노 게이고","작은 아씨들 - 루이자 메이 올컷"]],
+INFJ:["깊은 사색가형 독자","책 속 의미와 인간의 내면을 깊이 파고들며, 한 문장에서 삶의 방향을 찾는 통찰의 독자.",["데미안 - 헤르만 헤세","죽음의 수용소에서 - 빅터 프랭클","연금술사 - 파울로 코엘료"]],
+INTJ:["전략가형 지식 탐험가","목적이 분명한 독서로 지식 체계를 설계해요. 복잡한 아이디어와 미래를 그리는 책에 끌립니다.",["코스모스 - 칼 세이건","생각에 관한 생각 - 대니얼 카너먼","1984 - 조지 오웰"]],
+ISTP:["분석하는 장인형 독자","필요한 부분만 골라 읽고 원리를 파악하는 실속파. 추리와 구조가 탄탄한 이야기를 좋아해요.",["셜록 홈즈 전집 - 아서 코난 도일","마션 - 앤디 위어","이기적 유전자 - 리처드 도킨스"]],
+ISFP:["감성 수집가형 독자","예쁜 표지와 마음을 건드리는 문장에 이끌려 책을 고르는, 감각적이고 자유로운 독자.",["어린 왕자 - 생텍쥐페리","달러구트 꿈 백화점 - 이미예","아몬드 - 손원평"]],
+INFP:["꿈꾸는 시인형 독자","상상과 은유의 세계에서 길을 잃는 걸 즐기며, 책 속 인물에 깊이 공감하는 이상주의 독자.",["어린 왕자 - 생텍쥐페리","모모 - 미하엘 엔데","소년이 온다 - 한강"]],
+INTP:["끝없는 질문가형 독자","\"왜?\"라는 질문을 따라 여러 책을 넘나들어요. 이론과 아이디어 자체를 탐구하는 사색가.",["괴델, 에셔, 바흐 - 더글러스 호프스태터","코스모스 - 칼 세이건","멋진 신세계 - 올더스 헉슬리"]],
+ESTP:["모험가형 속독러","빠른 전개와 짜릿한 이야기를 사랑하는 행동파. 읽자마자 써먹을 수 있는 책을 좋아해요.",["다빈치 코드 - 댄 브라운","마션 - 앤디 위어","부의 추월차선 - 엠제이 드마코"]],
+ESFP:["분위기 메이커형 독자","재미있는 책은 꼭 친구에게 영업하는 독자. 유쾌하고 생생한 이야기로 독서를 즐겨요.",["오만과 편견 - 제인 오스틴","해리 포터와 마법사의 돌 - J.K. 롤링","불편한 편의점 - 김호연"]],
+ENFP:["상상력 폭발 탐험가형 독자","새로운 장르와 세계에 금세 빠져들고, 읽은 책 이야기로 대화를 꽃피우는 열정의 독자.",["해리 포터와 마법사의 돌 - J.K. 롤링","연금술사 - 파울로 코엘료","달러구트 꿈 백화점 - 이미예"]],
+ENTP:["토론왕형 독자","책을 읽으면 반박할 거리부터 찾는 지적 모험가. 논쟁적이고 도발적인 아이디어를 즐겨요.",["정의란 무엇인가 - 마이클 샌델","사피엔스 - 유발 하라리","멋진 신세계 - 올더스 헉슬리"]],
+ESTJ:["독서 모임 리더형 독자","체계적인 계획과 목표로 독서를 이끌어요. 실용적이고 성과로 이어지는 책을 선호합니다.",["성공하는 사람들의 7가지 습관 - 스티븐 코비","아주 작은 습관의 힘 - 제임스 클리어","총, 균, 쇠 - 재레드 다이아몬드"]],
+ESFJ:["따뜻한 북클럽 호스트형 독자","함께 읽고 나누는 시간을 사랑하는 독자. 사람 사이의 관계와 따뜻한 이야기에 마음이 가요.",["나미야 잡화점의 기적 - 히가시노 게이고","작은 아씨들 - 루이자 메이 올컷","82년생 김지영 - 조남주"]],
+ENFJ:["영감을 나누는 멘토형 독자","책에서 얻은 울림을 주변에 전하며 함께 성장하길 원하는 독자. 사람과 사회를 다룬 책을 좋아해요.",["죽음의 수용소에서 - 빅터 프랭클","소년이 온다 - 한강","미움받을 용기 - 기시미 이치로"]],
+ENTJ:["야망 넘치는 지휘관형 독자","목표 달성을 위한 무기로 책을 읽어요. 리더십, 전략, 큰 그림을 그리는 책을 섭렵합니다.",["군주론 - 마키아벨리","제로 투 원 - 피터 틸","사피엔스 - 유발 하라리"]]};
+let i=0,score={E:0,S:0,T:0,J:0};const $=id=>document.getElementById(id);
+function show(id){["start","quiz","result"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
+function render(){const q=Q[i];$("num").textContent=`Q${i+1} / ${Q.length}`;$("prog").style.width=(i/Q.length*100)+"%";$("q").textContent=q[1];$("a0").textContent="A. "+q[2];$("a1").textContent="B. "+q[3]}
+function pick(a){if(a===0)score[Q[i][0]]++;i++;i<Q.length?render():result()}
+function result(){let t="",bars="";for(const k of ["E","S","T","J"]){const p=Math.round(score[k]/3*100);t+=p>=50?k:OPP[k];
+bars+=`<div class="ax"><b>${k} ${NAME[k]}</b><div class="t"><i style="width:${p}%"></i></div><b>${100-p}% ${OPP[k]}</b></div>`.replace(`${NAME[k]}</b>`,`${NAME[k]} ${p}%</b>`).replace(`<b>${100-p}% ${OPP[k]}</b>`,`<b>${OPP[k]} ${NAME[OPP[k]]} ${100-p}%</b>`)}
+const r=R[t];$("result").innerHTML=`<div class="emoji">📖</div><p class="type" id="ttype">${t}</p><div class="title">${r[0]}</div><p class="sub">${r[1]}</p><h3>나의 독서 성향</h3>${bars}<h3>추천 도서</h3><ol class="books">${r[2].map(b=>`<li>${b}</li>`).join("")}</ol><button class="btn primary" id="re">다시 하기</button>`;
+$("re").onclick=()=>{i=0;score={E:0,S:0,T:0,J:0};show("start")};show("result")}
+$("go").onclick=()=>{show("quiz");render()};$("a0").onclick=()=>pick(0);$("a1").onclick=()=>pick(1);
+</script></body></html>
