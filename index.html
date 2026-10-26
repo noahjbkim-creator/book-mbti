@@ -12,7 +12,7 @@ h1{font-family:Georgia,serif;font-size:1.7em;margin:.2em 0;color:#6b3420}.sub{co
 .ax{display:flex;align-items:center;gap:8px;font-size:.85em;margin:8px 0}.ax .t{flex:1;height:12px;background:#ead8bd;border-radius:6px;overflow:hidden}.ax .t i{display:block;height:100%;background:#c07a4a}.ax b{width:64px}.ax b:last-child{text-align:right}
 .books li{margin:6px 0;line-height:1.5}h3{color:#6b3420;margin:20px 0 6px}.hide{display:none}.emoji{font-size:3em;text-align:center}
 </style></head><body><div class="card">
-<div id="start"><div class="emoji">📚</div><h1>나는 어떤 독자일까?</h1><p class="sub">책과 독서 습관에 관한 12가지 질문으로 알아보는 <b>독서 MBTI</b>. 약 2분이면 끝나요. 깊게 고민하지 말고 끌리는 쪽을 골라 주세요!</p><button class="btn primary" id="go">테스트 시작하기</button></div>
+<div id="start"><div class="emoji">📚</div><h1>나는 어떤 독자일까?</h1><p class="sub">책과 독서 습관에 관한 20가지 질문으로 알아보는 <b>독서 MBTI</b>. 약 2분이면 끝나요. 깊게 고민하지 말고 끌리는 쪽을 골라 주세요!</p><button class="btn primary" id="go">테스트 시작하기</button></div>
 <div id="quiz" class="hide"><div class="num" id="num"></div><div class="bar"><i id="prog"></i></div><div class="q" id="q"></div><button class="btn" id="a0"></button><button class="btn" id="a1"></button></div>
 <div id="result" class="hide"></div>
 </div><script>
@@ -20,15 +20,23 @@ const Q=[
 ["E","책을 다 읽고 나면 나는…","누군가에게 바로 이야기하거나 SNS에 후기를 남긴다","혼자 조용히 여운을 곱씹는다"],
 ["E","독서 모임에 초대받았다!","좋아! 다른 사람 생각을 듣는 게 제일 재밌다","음… 혼자 읽는 게 더 편하다"],
 ["E","가장 책이 잘 읽히는 장소는?","사람들이 오가는 카페나 북카페","아무도 없는 내 방 침대 위"],
+["E","책 선물을 고를 때 나는…","친구들에게 요즘 뭐 읽는지 물어보고 고른다","리뷰와 소개글을 혼자 찬찬히 읽고 고른다"],
+["E","작가 북토크 행사가 열린다면?","질문 시간에 손을 번쩍 들고 싶다","뒷자리에서 조용히 듣기만 해도 좋다"],
 ["S","서점에서 먼저 손이 가는 코너는?","실용서·에세이·역사 같은 실제 이야기","SF·판타지·우화 같은 상상의 세계"],
 ["S","좋은 문장이란?","정확하고 구체적으로 정보를 전달하는 문장","여러 번 곱씹게 되는 은유와 상징이 있는 문장"],
 ["S","소설을 읽을 때 나는…","장면 묘사와 디테일을 꼼꼼히 따라간다","숨은 의미와 결말 이후를 상상한다"],
+["S","책을 고를 때 더 끌리는 소개 문구는?","\"실제 사례로 배우는 OO\"","\"아무도 몰랐던 세계의 문이 열린다\""],
+["S","책을 다 읽고 기억에 남는 건?","구체적인 장면과 인상적인 정보","책 전체에 흐르던 분위기와 메시지"],
 ["T","책을 평가하는 기준은?","논리적 구성과 설득력","마음을 얼마나 울렸는가"],
 ["T","주인공이 비합리적인 선택을 했다","\"왜 저래?\" 답답하다","그럴 수밖에 없던 마음이 이해된다"],
 ["T","친구에게 책을 추천할 때 나는…","\"이 책은 이런 점에서 유익해\"라고 설명한다","\"너 요즘 힘들잖아, 이거 위로가 될 거야\"라고 건넨다"],
+["T","토론 모임에서 책 이야기를 할 때 나는…","작가 주장의 허점을 짚어본다","인물의 감정과 내 경험을 연결해 이야기한다"],
+["T","슬픈 결말의 책을 덮고 나면…","이 결말이 이야기상 필연적이었는지 따져본다","한동안 감정이 남아 먹먹하다"],
 ["J","내 독서 방식은?","올해 읽을 책 목록과 목표 권수가 있다","그때그때 끌리는 책을 집어 든다"],
 ["J","책 한 권을 읽는 스타일은?","한 권을 끝내고 다음 권으로 넘어간다","여러 권을 동시에 조금씩 읽는다"],
-["J","재미없는 책을 만났을 때","시작했으니 일단 끝까지 읽는다","과감히 덮고 다른 책을 편다"]];
+["J","재미없는 책을 만났을 때","시작했으니 일단 끝까지 읽는다","과감히 덮고 다른 책을 편다"],
+["J","여행 갈 때 챙기는 책은?","미리 정해둔 한 권을 챙긴다","공항 서점에서 그때 끌리는 책을 산다"],
+["J","도서관 대출 기한이 다가오면?","이미 계획대로 다 읽었다","마지막 날 몰아서 읽거나 연장한다"]];
 const OPP={E:"I",S:"N",T:"F",J:"P"};const NAME={E:"외향",I:"내향",S:"감각",N:"직관",T:"사고",F:"감정",J:"판단",P:"인식"};
 const R={
 ISTJ:["꼼꼼한 기록관형 독자","정해둔 목록대로 한 권씩 성실히 완독하고, 밑줄과 메모를 남기는 신뢰의 독자. 사실과 검증된 지식을 좋아해요.",["총, 균, 쇠 - 재레드 다이아몬드","사피엔스 - 유발 하라리","아주 작은 습관의 힘 - 제임스 클리어"]],
@@ -51,7 +59,7 @@ let i=0,score={E:0,S:0,T:0,J:0};const $=id=>document.getElementById(id);
 function show(id){["start","quiz","result"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
 function render(){const q=Q[i];$("num").textContent=`Q${i+1} / ${Q.length}`;$("prog").style.width=(i/Q.length*100)+"%";$("q").textContent=q[1];$("a0").textContent="A. "+q[2];$("a1").textContent="B. "+q[3]}
 function pick(a){if(a===0)score[Q[i][0]]++;i++;i<Q.length?render():result()}
-function result(){let t="",bars="";for(const k of ["E","S","T","J"]){const p=Math.round(score[k]/3*100);t+=p>=50?k:OPP[k];
+function result(){let t="",bars="";for(const k of ["E","S","T","J"]){const p=Math.round(score[k]/5*100);t+=p>=50?k:OPP[k];
 bars+=`<div class="ax"><b>${k} ${NAME[k]}</b><div class="t"><i style="width:${p}%"></i></div><b>${100-p}% ${OPP[k]}</b></div>`.replace(`${NAME[k]}</b>`,`${NAME[k]} ${p}%</b>`).replace(`<b>${100-p}% ${OPP[k]}</b>`,`<b>${OPP[k]} ${NAME[OPP[k]]} ${100-p}%</b>`)}
 const r=R[t];$("result").innerHTML=`<div class="emoji">📖</div><p class="type" id="ttype">${t}</p><div class="title">${r[0]}</div><p class="sub">${r[1]}</p><h3>나의 독서 성향</h3>${bars}<h3>추천 도서</h3><ol class="books">${r[2].map(b=>`<li>${b}</li>`).join("")}</ol><button class="btn primary" id="re">다시 하기</button>`;
 $("re").onclick=()=>{i=0;score={E:0,S:0,T:0,J:0};show("start")};show("result")}
